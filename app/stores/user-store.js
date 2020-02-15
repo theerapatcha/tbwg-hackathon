@@ -2,6 +2,8 @@ var users = {
     '1': {
         id: 1,
         username: 'kendo',
+        firstName: "Siwakorn",
+        lastName: "Ja",
         amount: 0,
         asset: {},
         expo_push_token: "ExponentPushToken[ST13AlKEUZ80tgT0krXBBH]"
@@ -9,6 +11,8 @@ var users = {
     '2': {
         id: 2,
         username: 'team',
+        firstName: "Theerapat",
+        lastName: "Chawannakul",
         amount: 0,
         asset: {},
         expo_push_token: ""
@@ -16,6 +20,8 @@ var users = {
     '3': {
         id: 3,
         username: 'joy',
+        firstName: "Kanokwan",
+        lastName: "Norasetkul",
         amount: 0,
         asset: {},
         expo_push_token: ""
@@ -51,6 +57,8 @@ exports.getOrCreateUserByUsername = function (username) {
         users[user_id] = {
             id: user_id,
             username: username,
+            firstName: "F" + username,
+            lastName: "L" + username,
             amount: 0,
             assets: {}
         };
