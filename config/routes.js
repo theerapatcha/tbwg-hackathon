@@ -3,21 +3,25 @@
 /**
  * Module dependencies.
  */
-
-const home = require('../app/controllers/home');
-
+const ctrlRoot = '../app/controllers';
+const home = require(ctrlRoot + '/home');
+const loan = require(ctrlRoot + '/loan');
+const user = require(ctrlRoot + '/user');
+const marketdata = require(ctrlRoot + '/marketdata')
 /**
  * Expose
  */
 
-module.exports = function(app) {
-  app.get('/', home.index);
-
+module.exports = function (app) {
+  home.create(app)
+  loan.create(app)
+  user.create(app)
+  marketdata.create(app)
   /**
    * Error handling
    */
 
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     // treat as 404
     if (
       err.message &&
@@ -32,7 +36,7 @@ module.exports = function(app) {
   });
 
   // assume 404 since no middleware responded
-  app.use(function(req, res) {
+  app.use(function (req, res) {
     res.status(404).render('404', {
       url: req.originalUrl,
       error: 'Not found'

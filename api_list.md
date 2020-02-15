@@ -1,0 +1,61 @@
+# Market Price API
+
+GET /api/marketdata/:asset/price (Return market price in THB)
+GET /api/marketdata/:asset/needed-amount/:thbAmount (Return asset amount needed for collate of thbAmount)
+
+# Loan Request & Collateral API
+
+POST /api/loans #(create loan)
+GET /api/loans/:id/collaterals (List all collaterals)
+POST /api/loans/:id/collaterals (Add collaterals)
+GET /api/loans/:id (Get loan information including collaterals so far)
+POST /api/loans/:id/submit
+
+GET /api/loans
+
+# Fund Request API (mock หน้าจอเอา)
+
+POST /api/funds (create fund requests)
+GET /api/funds?duration= (list fund requests sort by interest_rate asc)
+GET /api/funds/:id
+
+# Match API
+
+# Loan Request Model
+
+id:
+user:
+amount:
+duration: 3 | 6 | 9 | 12
+interest_rate: 0.10
+collaterals: []
+status: created | ready | requested | matched | completed
+
+# Collateral
+
+loan_id:
+user:
+asset:
+amount:
+status: deposited | returned
+
+# Funding Request Model
+
+id:
+user:
+amount:
+duration: 3 | 6 | 9 | 12
+interest_rate: 0.10
+
+# Loan Model
+
+loan_id:
+fund_id:
+paid_amount:
+duration:
+interest_rate:
+
+# Market Data Model
+
+asset: ETH
+price: 100.0 (THB)

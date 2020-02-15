@@ -23,7 +23,7 @@ const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
 const app = express();
-const connection = connect();
+// const connection = connect();
 
 /**
  * Expose
@@ -31,7 +31,7 @@ const connection = connect();
 
 module.exports = {
   app,
-  connection
+  // connection
 };
 
 // Bootstrap models
@@ -44,10 +44,9 @@ require('./config/passport')(passport);
 require('./config/express')(app, passport);
 require('./config/routes')(app, passport);
 
-connection
-  .on('error', console.log)
-  .on('disconnected', connect)
-  .once('open', listen);
+// connection
+//   .on('error', console.log)
+//   .once('open', listen);
 
 function listen() {
   if (app.get('env') === 'test') return;
@@ -55,8 +54,10 @@ function listen() {
   console.log('Express app started on port ' + port);
 }
 
-function connect() {
-  var options = { keepAlive: 1, useNewUrlParser: true };
-  mongoose.connect(config.db, options);
-  return mongoose.connection;
-}
+listen()
+
+// function connect() {
+//   var options = { keepAlive: 1, useNewUrlParser: true };
+//   mongoose.connect(config.db, options);
+//   return mongoose.connection;
+// }
