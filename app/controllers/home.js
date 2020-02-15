@@ -8,4 +8,7 @@ exports.create = function (app) {
       title: 'Node Express Mongoose Boilerplate'
     });
   })
+  app.get('/r/', (req, res) => {
+    res.redirect(301, req.params.p)
+  })
 };
