@@ -1,63 +1,80 @@
-[![Build Status](https://img.shields.io/travis/madhums/node-express-mongoose/master.svg?style=flat)](https://travis-ci.org/madhums/node-express-mongoose)
-[![Dependencies](https://img.shields.io/david/madhums/node-express-mongoose.svg?style=flat)](https://david-dm.org/madhums/node-express-mongoose)
-[![Code Climate](https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg)](https://codeclimate.com/github/madhums/node-express-mongoose)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/madhums/node-express-mongoose?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# LoanConnect Backend
 
-## Node Express Mongoose
+## Start
 
-A boilerplate application for building web apps using express, mongoose and passport.
+Using `npm start`, the server will be started and listened on port 3000
 
-Read the [wiki](https://github.com/madhums/node-express-mongoose/wiki) to understand how the application is structured.
+# API
 
-## Usage
+## Market Price API
 
-    git clone https://github.com/madhums/node-express-mongoose.git
-    cd node-express-mongoose
-    npm install
-    cp .env.example .env
-    npm start
+GET /api/marketdata/:asset/price (Return market price in THB)
+GET /api/marketdata/:asset/needed-amount/:thbAmount (Return asset amount needed for collate of thbAmount)
 
-Checkout the [apps that are built using this approach](https://github.com/madhums/node-express-mongoose/wiki/Apps-built-using-this-approach)
+## Loan Request & Collateral API
 
-## Docker
+POST /api/loans #(create loan)
+GET /api/loans/:id/collaterals (List all collaterals)
+POST /api/loans/:id/collaterals (Assigned a deposited collateral to a loan)
+GET /api/loans/:id (Get loan information including collaterals so far)
+POST /api/loans/:id/submit (Submit collateral-filled loan application)
+GET /api/loans (List all loans)
 
-You can also use docker for development. Make sure you run npm install on your host machine so that code linting and everything works fine.
+## Fund Request API (TODO: )
 
-```sh
-npm i
-cp .env.example .env
+POST /api/funds (create fund requests)
+GET /api/funds?duration= (list fund requests sort by interest_rate asc)
+GET /api/funds/:id
+
+## Match API (TODO: )
+
+# Model
+
+## Loan Request Model
+
+```
+id:
+user:
+amount:
+duration: 3 | 6 | 9 | 12
+interest_rate: 0.10
+collaterals: []
+status: created | ready | requested | matched | completed
 ```
 
-Start the services
+## Collateral
 
-```sh
-docker-compose up -d
+```
+loan_id:
+user:
+asset:
+amount:
+status: waiting | deposited | returned
 ```
 
-View the logs
+## Funding Request Model
 
-```sh
-docker-compose logs -f
+```
+id:
+user:
+amount:
+duration: 3 | 6 | 9 | 12
+interest_rate: 0.10
 ```
 
-In case you install a npm module while developing, it should also be installed within docker container, to do this first install the module you want with simple `npm i module name`, then run it within docker container
+## Loan Model
 
-```sh
-docker-compose exec node npm i
+```
+loan_id:
+fund_id:
+paid_amount:
+duration:
+interest_rate:
 ```
 
-If you make any changes to the file, nodemon should automatically pick up and restart within docker (you can see this in the logs)
+## Market Data Model
 
-To run tests
-
-```sh
-docker-compose exec -e MONGODB_URL=mongodb://mongo:27017/noobjs_test node npm test
 ```
-
-Note that we are overriding the environment variable set in `.env` file because we don't want our data erased by the tests.
-
-Note: The difference between exec and run is that, exec executes the command within the running container and run will spin up a new container to run that command. So if you want to run only the tests without docker-compose up, you may do so by running `docker-compose run -e MONGODB_URL=mongodb://mongo:27017/my_app_test node npm test`
-
-## License
-
-MIT
+asset: ETH
+price: 100.0 (THB)
+```
