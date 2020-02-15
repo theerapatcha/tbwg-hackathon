@@ -1,4 +1,26 @@
-var users = {};
+var users = {
+    '1': {
+        id: 1,
+        username: 'kendo',
+        amount: 0,
+        asset: {},
+        expo_push_token: "ExponentPushToken[ST13AlKEUZ80tgT0krXBBH]"
+    },
+    '2': {
+        id: 2,
+        username: 'team',
+        amount: 0,
+        asset: {},
+        expo_push_token: ""
+    },
+    '3': {
+        id: 3,
+        username: 'joy',
+        amount: 0,
+        asset: {},
+        expo_push_token: ""
+    },
+};
 var id = 1;
 exports.list = function () {
     return Object.keys(users).map(function (key) { return users[key]; });

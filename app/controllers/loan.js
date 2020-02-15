@@ -1,10 +1,14 @@
 /*!
  * Module dependencies.
  */
+
+const Expo = require('expo-server-sdk').Expo;
 const loanStore = require('../stores/loan-store');
+const collateralStore = require('../stores/collateral-store');
 const userStore = require('../stores/user-store');
 const marketdataSvc = require('../services/marketdata')
 
+let expo = new Expo();
 function calculateCollateralInTHBAmount(asset, amount) {
     return marketdataSvc.calculateTHBCollateralAmount(asset, amount)
 }
@@ -18,6 +22,53 @@ function calculateCollateralUserPayoutRatio(loan) {
     });
     console.log(ratio)
     return ratio;
+}
+
+function sendNotification(pushToken, body, data) {
+    // Create the messages that you want to send to clents
+    let messages = [];
+
+    // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+
+    // Check that all your push tokens appear to be valid Expo push tokens
+    if (!Expo.isExpoPushToken(pushToken)) {
+        console.error(`Push token ${pushToken} is not a valid Expo push token`);
+        return
+    }
+
+    // Construct a message (see https://docs.expo.io/versions/latest/guides/push-notifications)
+    messages.push({
+        to: pushToken,
+        sound: 'default',
+        body, //: 'This is a test notification',
+        data //: { withSome: 'data' },
+    })
+
+    // The Expo push notification service accepts batches of notifications so
+    // that you don't need to send 1000 requests to send 1000 notifications. We
+    // recommend you batch your notifications to reduce the number of requests
+    // and to compress them (notifications with similar content will get
+    // compressed).
+    let chunks = expo.chunkPushNotifications(messages);
+    let tickets = [];
+    (async () => {
+        // Send the chunks to the Expo push notification service. There are
+        // different strategies you could use. A simple one is to send one chunk at a
+        // time, which nicely spreads the load out over time:
+        for (let chunk of chunks) {
+            try {
+                let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+                console.log(ticketChunk);
+                tickets.push(...ticketChunk);
+                // NOTE: If a ticket contains an error code in ticket.details.error, you
+                // must handle it appropriately. The error codes are listed in the Expo
+                // documentation:
+                // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    })();
 }
 exports.create = function (app) {
     app.post('/api/loans', (req, res) => {
@@ -55,24 +106,30 @@ exports.create = function (app) {
         res.status(200).json(loanStore.list());
     })
 
-    app.post('/api/loans/:id/collaterals', (req, res) => {
+    app.post('/api/loans/:id/collaterals/:collateral_id', (req, res) => {
         const user = userStore.getOrCreateUserByUsername(req.headers.username)
+
         let loan = loanStore.get(req.params.id);
-        if (loan) {
-            var thbAmount = calculateCollateralInTHBAmount(req.body.asset, req.body.amount)
-            var collateral = {
-                user_id: user.id,
-                asset: req.body.asset,
-                amount: req.body.amount,
-                thb_amount: thbAmount,
-                status: "deposited"
-            }
-            loan.total_collateral_amount = loan.total_collateral_amount + thbAmount
-            loan.collaterals.push(collateral)
-            if (loanStore.update(loan.id, loan)) {
-                res.status(200).json(loan);
+        const loanUser = userStore.get(loan.user_id)
+        console.log(loanUser)
+        let collateral = collateralStore.get(req.params.collateral_id)
+        if (loan && collateral) {
+
+            if (collateral.status === "deposited") {
+                loan.total_collateral_amount = loan.total_collateral_amount + collateral.thb_amount
+                loan.collaterals.push(collateral)
+                if (loanStore.update(loan.id, loan)) {
+                    if (loan.total_collateral_amount >= loan.amount) {
+                        sendNotification(loanUser.expo_push_token, "ยินดีด้วย เงินกู้ได้รับการอนุมัติ เนื่องจากคุณได้รับสินทรัพย์ค้ำประกันครบแล้ว", {
+                            loan_id: loan.id
+                        })
+                    }
+                    res.status(200).json(loan);
+                } else {
+                    res.status(500).json({ error: "internal server error" })
+                }
             } else {
-                res.status(500).json({ error: "internal server error" })
+                res.status(403).json({ error: "collateral not yet deposited" })
             }
         } else {
             res.status(404).json({ error: "not found" })

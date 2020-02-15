@@ -6,6 +6,7 @@
 const ctrlRoot = '../app/controllers';
 const home = require(ctrlRoot + '/home');
 const loan = require(ctrlRoot + '/loan');
+const collateral = require(ctrlRoot + '/collateral');
 const user = require(ctrlRoot + '/user');
 const marketdata = require(ctrlRoot + '/marketdata')
 /**
@@ -15,6 +16,7 @@ const marketdata = require(ctrlRoot + '/marketdata')
 module.exports = function (app) {
   home.create(app)
   loan.create(app)
+  collateral.create(app)
   user.create(app)
   marketdata.create(app)
   /**

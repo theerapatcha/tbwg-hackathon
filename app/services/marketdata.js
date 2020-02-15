@@ -7,7 +7,7 @@ const axios = require("axios")
 var is_created = false;
 
 const BINANCE_PRICE_CODE_HASH = '6b7be61b150aec5eb853afb3b53e41438959554580d31259a1095e51645bcd28';
-const ASSETS = ['ETH']
+const ASSETS = ['ETH', 'BTC']
 const ASSET_PRICE = {
     JFIN: 1.5,
     ETH: 8821.8,
@@ -23,33 +23,40 @@ const ASSET_MULTIPLIER = {
 function init() {
     if (is_created) return;
     is_created = true;
+
+    console.log("FETCH")
+    ASSETS.forEach(asset => {
+        // console.log(asset)
+        requestBandProtocol({ "crypto_symbol": asset }, BINANCE_PRICE_CODE_HASH)
+            .then(price_in_usd => {
+                ASSET_PRICE[asset] = price_in_usd * 31;
+                console.log(ASSET_PRICE)
+            }).catch(resp => console.error("Error"))
+    })
     setInterval(() => {
-        console.log("Fetch price")
+        console.log("FETCH")
         ASSETS.forEach(asset => {
-            console.log(asset)
-            // requestBandProtocol({ "crypto_symbol": asset }, BINANCE_PRICE_CODE_HASH)
-            //     .then(result => {
-            //         ASSET_PRICE[asset] = result.crypto_price_in_usd * 31;
-            //     }).catch(resp => console.error("Error"))
+            // console.log(asset)
+            requestBandProtocol({ "crypto_symbol": asset }, BINANCE_PRICE_CODE_HASH)
+                .then(price_in_usd => {
+                    ASSET_PRICE[asset] = price_in_usd * 31;
+                    console.log(ASSET_PRICE)
+                }).catch(resp => console.error("Error"))
         })
-    }, 5000);
+    }, 60000);
 
 };
 
 
 function requestBandProtocol(params, codeHash) {
     return axios.post("http://rpc.alpha.bandchain.org/bandsv/request", {
-        type: "SYNCHRONOUS",
+        type: "FULL",
         params,
         codeHash
     }).then(result => {
-        console.log(result.data)
-        return new Promise((resolve) => {
-            setTimeout(resolve, 3000);
-        }).then(r => axios.get("http://rpc.alpha.bandchain.org/zoracle/request/" + result.data.id))
-    }).then(result => {
-        console.log(result.data)
-        return result.data.result.result
+        const data = result.data.proof.jsonProof.oracleDataProof.data;
+        const resHex = data.substring(0, 16);
+        return parseInt("0x" + resHex) / 100.0;
     })
 }
 
