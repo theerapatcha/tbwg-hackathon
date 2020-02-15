@@ -34,6 +34,7 @@
     "method-override": "~3.0.0",
     "mongoose": "~5.8.4",
     "morgan": "~1.9.1",
+    "node-deeplink": "^0.6.0",
     "passport": "~0.4.1",
     "passport-local": "~1.0.0",
     "pm2": "~4.2.1",
