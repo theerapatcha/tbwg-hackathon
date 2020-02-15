@@ -10,14 +10,7 @@ exports.create = function (app) {
       title: 'Node Express Mongoose Boilerplate'
     });
   })
-  app.get('/r/', (req, res) => {
-    res.redirect(301, req.params.p)
+  app.get('/r', (req, res) => {
+    res.redirect(301, req.query.p)
   })
-  app.get(
-    '/deeplink',
-    deeplink({
-      url: 'expo://192.168.43.205:19000'
-      fallback: 'https://google.com'
-    })
-  );
 };
