@@ -16,10 +16,8 @@ exports.create = function (app) {
   app.get(
     '/deeplink',
     deeplink({
-      fallback: 'https://google.com',
-      android_package_name: 'co.flipay',
-      ios_store_link:
-        ''
+      url: 'expo://192.168.43.205:19000'
+      fallback: 'https://google.com'
     })
   );
 };
