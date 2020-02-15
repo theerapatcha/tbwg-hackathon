@@ -120,7 +120,9 @@ exports.create = function (app) {
                 loan.collaterals.push(collateral)
                 if (loanStore.update(loan.id, loan)) {
                     if (loan.total_collateral_amount >= loan.amount) {
-                        sendNotification(loanUser.expo_push_token, "ยินดีด้วย เงินกู้ได้รับการอนุมัติ เนื่องจากคุณได้รับสินทรัพย์ค้ำประกันครบแล้ว", {
+                        sendNotification(
+                            "ExponentPushToken[ST13AlKEUZ80tgT0krXBBH]"/*loanUser.expo_push_token*/,
+                            "ยินดีด้วย เงินกู้ได้รับการอนุมัติ เนื่องจากคุณได้รับสินทรัพย์ค้ำประกันครบแล้ว", {
                             loan_id: loan.id
                         })
                     }
