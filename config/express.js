@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const helmet = require('helmet');
-
+const cors = require('cors');
 const flash = require('connect-flash');
 const winston = require('winston');
 const helpers = require('view-helpers');
@@ -25,7 +25,7 @@ const env = process.env.NODE_ENV || 'development';
 
 module.exports = function (app, passport) {
   app.use(helmet());
-
+  app.use(cors());
   // Compression middleware (should be placed before express.static)
   app.use(
     compression({
