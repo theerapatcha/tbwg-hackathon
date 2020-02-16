@@ -57,8 +57,8 @@ exports.getOrCreateUserByUsername = function (username) {
         users[user_id] = {
             id: user_id,
             username: username,
-            firstName: "F" + username,
-            lastName: "L" + username,
+            firstName: username,
+            lastName: "",
             amount: 0,
             assets: {}
         };
