@@ -37,7 +37,7 @@
     "node-deeplink": "^0.6.0",
     "passport": "~0.4.1",
     "passport-local": "~1.0.0",
-    "pm2": "~4.2.1",
+    "pm2": "~5.2.0",
     "pug": "~2.0.4",
     "view-helpers": "~0.2.0",
     "web3": "^1.2.6",
