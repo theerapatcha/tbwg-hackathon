@@ -28,7 +28,7 @@
     "dotenv": "~8.2.0",
     "ethereumjs-tx": "^2.1.2",
     "expo-server-sdk": "^3.4.0",
-    "express": "~4.17.1",
+    "express": "~4.17.3",
     "express-session": "~1.17.0",
     "helmet": "~3.21.2",
     "method-override": "~3.0.0",
